@@ -20,6 +20,6 @@ __pycache__/
 *.pdf
 *.save
 
-# Editor and OS files
+# Editor and OS files to
 .DS_Store
 .vscode/
