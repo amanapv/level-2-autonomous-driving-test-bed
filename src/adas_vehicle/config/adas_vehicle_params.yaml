@@ -1,7 +1,7 @@
 obstacle_detection_node:
   ros__parameters:
     forward_half_angle_deg: 35.0
-    safety_distance_m: 1.3
+    safety_distance_m: 1.2
     scan_topic: /scan
 
 acc_node:
