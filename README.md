@@ -1,9 +1,9 @@
-# ADAS Vehicle Simulation
+# Level 2 Autonomous Driving Test Bed
 
-A ROS 2 and Gazebo simulation of a small Ackermann-steered vehicle. The
-implemented features are LiDAR obstacle detection, adaptive cruise control
-(ACC), and reactive obstacle avoidance. RViz displays the simulated robot and
-its LiDAR scan.
+A scaled vehicle project combining CAD and hardware references with ROS 2
+software. Its Gazebo simulation demonstrates LiDAR obstacle detection,
+adaptive cruise control (ACC), and reactive obstacle avoidance; RViz displays
+the simulated vehicle and its LiDAR scan.
 
 ## Vehicle preview
 
@@ -14,8 +14,8 @@ its LiDAR scan.
 More views, circuit reference, and the STEP/STL chassis files are in
 [`docs/`](docs/hardware-reference.md).
 
-This repository contains the simulation source, not a physical vehicle
-controller; sensor and actuator behavior is simulated in Gazebo.
+The ROS 2/Gazebo software simulates sensor and actuator behavior; it does not
+control a physical vehicle.
 
 ## Requirements
 
