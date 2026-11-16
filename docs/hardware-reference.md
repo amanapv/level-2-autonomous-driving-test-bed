@@ -63,7 +63,7 @@ CAD files:
 
 ## Electrical circuit reference
 
-The updated electrical diagram shows the Raspberry Pi 4-based hardware layout
+The electrical diagram shows the Raspberry Pi 4-based hardware layout
 and its connections to the power supply, motor driver, motors, camera, LiDAR,
 servo, and sensor modules. It provides a visual reference for the proposed
 platform; the simulation uses virtual Gazebo sensors and actuators.
