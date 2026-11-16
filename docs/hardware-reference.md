@@ -18,17 +18,6 @@ Gazebo sensors and actuators.
 | Gearbox | Design calculation estimates an approximately 8:1 reduction | Not modeled separately |
 | Battery | Design calculation selects 12.8 V, 6 Ah LiFePO4 | Not modeled |
 
-The project materials identify a Raspberry Pi 4 in the component list, while
-the circuit diagram labels a Raspberry Pi 5. They also specify a generic 12 V
-lithium-ion battery in one place and calculate for a 12.8 V LiFePO4 battery
-elsewhere. Confirm the intended parts and ratings before assembling
-hardware. The component list names an L293N motor driver, but the circuit
-diagram labels an L298N. The L293N current rating in the
-materials may not support the assumed motor load; check the exact driver part
-and motor stall current and select appropriately rated protection and power
-electronics. The diagram below is a reference, not a verified wiring
-instruction.
-
 ### Estimated power budget
 
 The design estimates 80.5 W average consumption and 120 W peak consumption.
@@ -74,14 +63,11 @@ CAD files:
 
 ## Electrical circuit reference
 
-The supplied circuit diagram labels a Raspberry Pi 5 and an L298N driver,
-while the component selection above identifies a Raspberry Pi 4 and an L293N.
-It is included as a visual reference only; verify the exact board, pinout,
-power regulation, motor-driver current limits, grounds, and protections before
-wiring. It also shows camera and sensor modules that are not active in this
-simulation.
+The updated electrical diagram shows the Raspberry Pi 4-based hardware layout
+and its connections to the power supply, motor driver, motors, camera, LiDAR,
+servo, and sensor modules. It provides a visual reference for the proposed
+platform; the simulation uses virtual Gazebo sensors and actuators.
 
 ![ADAS robotics electrical circuit diagram](assets/electrical-circuit-diagram.png)
 
-The project photos and circuit image are user-supplied. Confirm you have
-permission to redistribute them before making the GitHub repository public.
+
