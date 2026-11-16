@@ -1,0 +1,26 @@
+obstacle_detection_node:
+  ros__parameters:
+    forward_half_angle_deg: 35.0
+    safety_distance_m: 1.2
+    scan_topic: /scan
+
+acc_node:
+  ros__parameters:
+    cruise_speed_mps: 3.0
+    time_headway_s: 1.5
+    min_gap_m: 1.5
+
+obstacle_avoidance_node:
+  ros__parameters:
+    trigger_distance_m: 1.8
+    hemisphere_half_angle_deg: 70.0
+    max_bias_rad: 0.6
+    scan_topic: /scan
+
+vehicle_controller_node:
+  ros__parameters:
+    wheelbase_m: 0.33
+    max_speed_mps: 4.0
+    speed_kp: 0.8
+    odom_topic: /odom
+    cmd_vel_topic: /cmd_vel

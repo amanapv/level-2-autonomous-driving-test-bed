@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<robot name="adas_vehicle" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ===================== Vehicle scale parameters =====================
+       Scaled Level-2 ADAS research prototype (F1TENTH/AutoRally-class testbed):
+       servo-actuated Ackermann front steering, rear DC-motor drive,
+       and roof-mounted 2D lidar. -->
+  <xacro:property name="chassis_len" value="0.42"/>
+  <xacro:property name="chassis_w" value="0.19"/>
+  <xacro:property name="chassis_h" value="0.08"/>
+  <xacro:property name="chassis_mass" value="3.0"/>
+
+  <xacro:property name="wheel_radius" value="0.051"/>
+  <xacro:property name="wheel_width" value="0.05"/>
+  <xacro:property name="wheel_mass" value="0.2"/>
+
+  <xacro:property name="wheelbase" value="0.33"/>
+  <xacro:property name="track" value="0.225"/>
+
+  <xacro:property name="steer_link_mass" value="0.08"/>
+  <xacro:property name="steering_limit" value="0.4"/>
+
+  <!-- wheel joints attach at base_link's own z height (local z offset 0), so
+       base_link must sit exactly wheel_radius above the ground for the wheels
+       to touch down at z=0. Chassis bottom then sits ~1.1cm above ground. -->
+  <xacro:property name="base_z" value="${wheel_radius}"/>
+
+  <!-- ===================== Inertia macros ===================== -->
+  <xacro:macro name="box_inertia" params="m l w h">
+    <inertia ixx="${m/12*(h*h+w*w)}" ixy="0" ixz="0"
+             iyy="${m/12*(l*l+h*h)}" iyz="0"
+             izz="${m/12*(l*l+w*w)}"/>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertia ixx="${m/12*(3*r*r+h*h)}" ixy="0" ixz="0"
+             iyy="${m/12*(3*r*r+h*h)}" iyz="0"
+             izz="${m/2*r*r}"/>
+  </xacro:macro>
+
+  <!-- ===================== base_footprint / base_link ===================== -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${base_z}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <geometry><box size="${chassis_len} ${chassis_w} ${chassis_h}"/></geometry>
+      <material name="chassis_dark"><color rgba="0.12 0.12 0.14 1.0"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="${chassis_len} ${chassis_w} ${chassis_h}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="${chassis_mass}"/>
+      <xacro:box_inertia m="${chassis_mass}" l="${chassis_len}" w="${chassis_w}" h="${chassis_h}"/>
+    </inertial>
+  </link>
+
+  <!-- ===================== Wheel macro ===================== -->
+  <xacro:macro name="wheel" params="name parent x y steer">
+    <xacro:if value="${steer}">
+      <link name="${name}_steer_link">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry><cylinder radius="0.02" length="0.05"/></geometry>
+          <material name="${name}_steer_metal"><color rgba="0.55 0.55 0.6 1.0"/></material>
+        </visual>
+        <inertial>
+          <mass value="${steer_link_mass}"/>
+          <xacro:cylinder_inertia m="${steer_link_mass}" r="0.02" h="0.05"/>
+        </inertial>
+      </link>
+      <joint name="${name}_steering_joint" type="revolute">
+        <parent link="${parent}"/>
+        <child link="${name}_steer_link"/>
+        <origin xyz="${x} ${y} 0" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="${-steering_limit}" upper="${steering_limit}" effort="10" velocity="4.0"/>
+        <dynamics damping="0.2" friction="0.1"/>
+      </joint>
+      <link name="${name}_wheel">
+        <visual>
+          <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+          <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+          <material name="${name}_tire_black"><color rgba="0.05 0.05 0.05 1.0"/></material>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+          <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        </collision>
+        <inertial>
+          <mass value="${wheel_mass}"/>
+          <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+        </inertial>
+      </link>
+      <joint name="${name}_wheel_joint" type="continuous">
+        <parent link="${name}_steer_link"/>
+        <child link="${name}_wheel"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0.05" friction="0.02"/>
+      </joint>
+    </xacro:if>
+    <xacro:unless value="${steer}">
+      <link name="${name}_wheel">
+        <visual>
+          <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+          <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+          <material name="${name}_tire_black"><color rgba="0.05 0.05 0.05 1.0"/></material>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+          <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        </collision>
+        <inertial>
+          <mass value="${wheel_mass}"/>
+          <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+        </inertial>
+      </link>
+      <joint name="${name}_wheel_joint" type="continuous">
+        <parent link="${parent}"/>
+        <child link="${name}_wheel"/>
+        <origin xyz="${x} ${y} 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0.05" friction="0.02"/>
+      </joint>
+    </xacro:unless>
+    <gazebo reference="${name}_wheel">
+      <mu1>1.1</mu1>
+      <mu2>1.1</mu2>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:wheel name="front_left"  parent="base_link" x="${wheelbase/2}"  y="${track/2}"  steer="true"/>
+  <xacro:wheel name="front_right" parent="base_link" x="${wheelbase/2}"  y="${-track/2}" steer="true"/>
+  <xacro:wheel name="rear_left"   parent="base_link" x="${-wheelbase/2}" y="${track/2}"  steer="false"/>
+  <xacro:wheel name="rear_right"  parent="base_link" x="${-wheelbase/2}" y="${-track/2}" steer="false"/>
+
+  <!-- ===================== 2D Lidar (roof mounted) ===================== -->
+  <link name="lidar_link">
+    <visual>
+      <geometry><cylinder radius="0.025" length="0.03"/></geometry>
+      <material name="lidar_cyan"><color rgba="0.0 0.8 0.8 1.0"/></material>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.025" length="0.03"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.08"/>
+      <xacro:cylinder_inertia m="0.08" r="0.025" h="0.03"/>
+    </inertial>
+  </link>
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <!-- Roof-mounted, raised clear of the camera housing's z-band
+         (chassis_h/2+0.03 +/- 0.01) so the lidar's horizontal scan plane
+         does not self-detect the camera as a phantom obstacle. -->
+    <origin xyz="0.05 0 ${chassis_h/2 + 0.065}" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:include filename="$(find adas_vehicle)/urdf/vehicle.gazebo.xacro"/>
+
+</robot>

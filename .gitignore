@@ -1,0 +1,25 @@
+# ROS 2 / colcon build output
+/build/
+/install/
+/log/
+*.egg-info/
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Local workspace and backup files
+/.ros2_workspace
+/adas_lowram.patch
+/adas_lowram_files/
+/adas_lowram_files.zip
+/adas project/
+/src/adas_basics/
+*.pdf
+*.save
+
+# Editor and OS files
+.DS_Store
+.vscode/
